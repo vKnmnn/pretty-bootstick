@@ -5,6 +5,7 @@
 
 # modules to preload for the standalone grub
 grub_modules=""
+
 # name of configfile for grub to expect in mbusb.d/$distro
 # .ref is automatically added to avoid self-sourcing via *.cfg
 grub_standalone_config="refind-helper.cfg" 
@@ -36,12 +37,13 @@ fi
 # Show usage
 usage() {
     cat <<-EOF
-        Usage: refind-multiboot-installer.sh [TARGET_DISK] eg. refind-multiboot-installer.sh /dev/sda1
+        Usage: refind-multiboot-installer.sh [OPTIONS] [TARGET_DISK] eg. refind-multiboot-installer.sh /dev/sda1
         Install refind to a target drive and add a standalone efi bootloader for each iso file contained in the iso directory.
 
         device                      Device to install on
         -h, --help                  Display this message
         -s, --subdirectory <NAME>   Specify a data subdirectory (e.g. "boot" or "")
+        -m, --mbusbdevice           Specify a device, in case mbusb.d does not reside on ESP
 
         Further options have to be edited in the CUSTOM section of this file.
 
@@ -197,8 +199,8 @@ copyFiles() {
         ## check for existing config folders
         if [ -d "${mbusbd}/${distro}.d" ]; then
             echo "creating config for ""${distro}" "in " "$(realpath "${isofile}" )"
-           createConfig "${mbusbd}/${distro}.d/${grub_standalone_config}"           echo "copying..."
-           cp -f "${script_path}""/refind/iso.efi" "${mbusbd}""/""${distro}"".d/""${distro}"".efi"
+            createConfig "${mbusbd}/${distro}.d/${grub_standalone_config}"           echo "copying..."
+            cp -f "${script_path}""/refind/iso.efi" "${mbusbd}""/""${distro}"".d/""${distro}"".efi"
 
             ## add icons to be copied, if refind offers no auto-detection
             #  ^ todo
