@@ -67,7 +67,7 @@ parseArgs() {
             showUsage
             exit 0
             ;;
-        -m|--mbusb)
+        -m|--mbusbdevice)
             # if esp differs from data partition, use this
             mbusb_part="${2}"
             export use_extra_partitio=true
@@ -191,20 +191,22 @@ fi
 }
 
 copyFiles() {
-    printf "Copying files to target"
+    echo -e "\nCopying files to target"
     for isofile in "${mbusb_mount}${iso_dir}"/*; do
         # parse name of distro
         filename="$(basename "${isofile}")"
         distro="$(awk -v file="${filename}" 'BEGIN{FS="-"; $0=file; print tolower($1)}')"
         ## check for existing config folders
         if [ -d "${mbusbd}/${distro}.d" ]; then
-            echo "creating config for ""${distro}" "in " "$(realpath "${isofile}" )"
-            createConfig "${mbusbd}/${distro}.d/${grub_standalone_config}"           echo "copying..."
+            echo "Creating config for \"""${distro}""\""
+            createConfig "${mbusbd}/${distro}.d/${grub_standalone_config}"
             cp -f "${script_path}""/refind/iso.efi" "${mbusbd}""/""${distro}"".d/""${distro}"".efi"
-
             ## add icons to be copied, if refind offers no auto-detection
             #  ^ todo
+            else
+            echo "no matching folder found: " "${distro}" " -> " "${distro}.d"
         fi
+
     done
 }
 # Create the file that loads another grub.cfg to display menuentries
